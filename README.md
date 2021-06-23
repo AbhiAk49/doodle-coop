@@ -1,4 +1,4 @@
-# main-app
+# Doodle Coop Front End - VueJS
 
 ## Project setup
 ```
