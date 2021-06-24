@@ -47,7 +47,7 @@ import {fetchUserSessions} from '@/services/sessions';
                     .then(sessions=>{
                         this.loading=false;
                         this.sessions=sessions;
-                        console.log(this.sessions);
+                        //console.log(this.sessions);
                     })
                     .catch( error => {
                         this.error = error;

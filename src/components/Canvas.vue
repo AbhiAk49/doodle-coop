@@ -1,6 +1,21 @@
 <template> 
     <div>
         <v-container class="mx-auto">
+            <!-- <v-row v-if="loading"
+            class="fill-height"
+            align-content="center"
+            justify="center"
+            >
+                <v-col class="ma-0 pa-0">
+                    <v-progress-linear
+                        color="deep-purple accent-4"
+                        indeterminate
+                        rounded
+                        height="6"
+                    ></v-progress-linear>
+                </v-col>
+            </v-row>
+            <div v-else> -->
             <v-row>
                 <v-col align = "center">
                     <v-sheet
@@ -12,7 +27,9 @@
                         <canvas ref="mainCanvas" @mousemove="drawOnCanvas"  
                         @mousedown="beginDrawing" 
                         @mouseup="stopDrawing"  @mouseleave="disableDrawing"
-                        ></canvas>
+                        >
+                            <v-img :src = base64ImgData ></v-img>
+                        </canvas>
                     </v-sheet>
                 </v-col>
             </v-row>
@@ -37,13 +54,25 @@
                         min=1
                         max=10
                     ></v-slider>
-                    <v-btn
-                    elevation="1"
-                    @click="clearCanvas(); sendClear()"
-                    >Clear
-                    </v-btn>
+                    <v-row align-content = "space-between">
+                        <v-col align-self="start">
+                            <v-btn
+                            elevation="1"
+                            @click="clearCanvas(); sendClear()"
+                            >Clear
+                            </v-btn>
+                        </v-col>
+                        <v-col  align-self="end">
+                            <v-btn
+                            elevation="1"
+                            @click="leave()"
+                            >Exit
+                            </v-btn>
+                        </v-col>
+                    </v-row>
                 </v-col>
             </v-row>
+            <!-- </div> -->
         </v-container>
             <v-footer padless>
             <v-col
@@ -64,6 +93,7 @@ export default {
     data:() => ({
         canvas:null,
         ctx:null,
+        loading:true,
         isDrawing:false,
         coords:{
             x:0,
@@ -85,12 +115,20 @@ export default {
     methods: {
         newUserJoined(user){
             if(user.email !== this.userEmail){
+                this.sendToSocket();
                 Vue.$toast.success(
                         `${user.name} joined`,
                       {
                           timeout:5000
                       });
             }
+
+        },
+        userLeft(user){
+            Vue.$toast.error(
+                    `${user.name} left`,
+                    { timeout : 3000}
+            );
 
         },
         showCoordinates(e) {
@@ -119,6 +157,7 @@ export default {
             this.coords.x = e.offsetX;
             this.coords.y = e.offsetY;
             this.isDrawing = true;
+            setTimeout(this.sendToSocket,1000);
         },
         stopDrawing(e) {
             if (this.isDrawing) {
@@ -126,7 +165,6 @@ export default {
                 this.coords.x = 0;
                 this.coords.y = 0;
                 this.isDrawing = false;
-                this.base64ImgData  = this.canvas.toDataURL("image/png");
                 this.sendToSocket();
                 this.isCanvasCleared = false;
             }
@@ -135,6 +173,7 @@ export default {
             this.isDrawing = false;
         },
         sendToSocket(){
+                this.base64ImgData  = this.canvas.toDataURL("image/png");
                 this.socket.emit("canvas-data",this.base64ImgData);
         },
         updateCanvas(img,context){
@@ -149,6 +188,10 @@ export default {
         sendClear(){
             this.socket.emit("canvas-clear");
             //this.isCanvasCleared=true;
+        },
+        leave(){
+            this.socket.emit("leave",this.userEmail);
+            this.$router.push({name: 'home'})
         }
         // onResize (){
         //     canvas.width = window.innerWidth;
@@ -174,16 +217,23 @@ export default {
     "transports" : ["websocket"]
     };
     this.socket = io('http://localhost:3000', connectionOptions);
-    this.socket.emit("joinSession",this.sessionId,this.userEmail,this.base64ImgData);
-        this.socket.on('user-join',(foundUser)=>{
+    this.socket.emit("joinSession",this.sessionId,this.userEmail);
+    this.socket.on('user-join',(foundUser)=>{
         if(foundUser){
             this.newUserJoined(foundUser);
         }
     });
+    this.socket.on('user-left',(user)=>{
+        if(user){
+            this.userLeft(user);
+        }
+    })
     this.socket.on("sync-data",(data)=>{
+            //console.log('Synching');
             const self = this;
             let updateImg = new Image();
             updateImg.src = data;
+            //console.log(data);
             updateImg.onload = () => {
             this.updateCanvas(updateImg,self);
             }
