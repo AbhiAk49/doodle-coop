@@ -46,6 +46,20 @@
           </v-btn>
         </v-col>
         </v-card>
+        <v-divider class="ma-5"></v-divider>
+         <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">
+          Available Sessions
+        </h3>
+        <v-row>
+          <template v-for="(session, i) in sessions">
+            <v-col
+              :key="i"
+              md="4"
+            >
+              <SessionCard :session = "session" />
+            </v-col>
+          </template>
+        </v-row>
         </v-container>
       </v-row>
     </v-container>
@@ -54,8 +68,12 @@
 <script>
 import {getUsers} from '@/services/auth';
 import {fetchUserSessions} from '@/services/sessions';
+import SessionCard from '@/components/utils/SessionCard';
   export default {
     name:'AppHome',
+    components:{
+      SessionCard
+    },
     data: () => ({
       sessions:[],
       error: null,
@@ -66,8 +84,7 @@ import {fetchUserSessions} from '@/services/sessions';
           token:String
       },
       users:[],
-      selectedUsers:[]
-
+      selectedUsers:[],
     }),
     computed: {
               token(){
