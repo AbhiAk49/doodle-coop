@@ -3,6 +3,7 @@ import AppLogin from '@/components/AppLogin';
 import AppSignup from '@/components/AppSignup';
 import AppHome from '@/components/AppHome';
 import Canvas from '@/components/Canvas';
+import Saved from '@/components/Saved';
 import PageNotFound from '@/components/PageNotFound';
 
 import store from '@/store';
@@ -30,8 +31,14 @@ const router = new Router({
             meta
         },
         {
+            name: 'saved',
+            path: '/saved',
+            component: Saved,
+            meta
+        },
+        {
             name: 'canvas',
-            path: '/doodle',
+            path: '/doodle/:sessionId',
             component: Canvas,
             meta
         },

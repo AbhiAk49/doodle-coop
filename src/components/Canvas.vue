@@ -1,21 +1,6 @@
 <template> 
-    <div>
+    <div >
         <v-container class="mx-auto">
-            <!-- <v-row v-if="loading"
-            class="fill-height"
-            align-content="center"
-            justify="center"
-            >
-                <v-col class="ma-0 pa-0">
-                    <v-progress-linear
-                        color="deep-purple accent-4"
-                        indeterminate
-                        rounded
-                        height="6"
-                    ></v-progress-linear>
-                </v-col>
-            </v-row>
-            <div v-else> -->
             <v-row>
                 <v-col align = "center">
                     <v-sheet
@@ -87,9 +72,11 @@
 
 <script>
 import Vue from 'vue';
-import io from 'socket.io-client';
 export default {
     name: 'Canvas',
+    // props: {
+    //     sessionId
+    // },
     data:() => ({
         canvas:null,
         ctx:null,
@@ -99,14 +86,22 @@ export default {
             x:0,
             y:0
         },
-        sessionId:'Test',
+        sessionId:'',
         strokeColor:'#000000',
         strokeWidth:1,
         base64ImgData:'',
-        socket:{},
         isCanvasCleared:true
         //updateImg: Image
     }),
+    sockets:{
+        connect(){
+            console.log(`connected to socket`);
+            this.$socket.client.emit("subscribe",this.sessionId,this.userEmail);
+            this.sendToSocket();
+            this.loading = false;
+            //this.$emit()
+        }
+    },
     computed: {
               userEmail(){
             return this.$store.state.auth.email;
@@ -174,7 +169,7 @@ export default {
         },
         sendToSocket(){
                 this.base64ImgData  = this.canvas.toDataURL("image/png");
-                this.socket.emit("canvas-data",this.base64ImgData);
+                this.$socket.client.emit("canvas-data",this.sessionId,this.base64ImgData);
         },
         updateCanvas(img,context){
             context.ctx.drawImage(img,0,0);
@@ -186,12 +181,12 @@ export default {
                 // }
         },
         sendClear(){
-            this.socket.emit("canvas-clear");
+            this.$socket.client.emit('canvas-clear',this.sessionId);
             //this.isCanvasCleared=true;
         },
         leave(){
-            this.socket.emit("leave",this.userEmail);
-            this.$router.push({name: 'home'})
+            this.$socket.client.emit('leave',this.sessionId,this.userEmail);
+            this.$router.push({name: 'home'});
         }
         // onResize (){
         //     canvas.width = window.innerWidth;
@@ -199,55 +194,54 @@ export default {
         // }
     },
    mounted() {
+    this.sessionId = this.$route.params.sessionId;
     this.canvas = this.$refs["mainCanvas"];
     this.ctx = this.canvas.getContext("2d");  
-
-    // window.addEventListener('resize', onResize, false);
-    // onResize();
-    // this.canvas.height = window.innerHeight;
-    // this.canvas.width = window.innerWidth;
     this.canvas.height = 400;
     this.canvas.width = 900;
+    if (localStorage.getItem('reloaded')) {
+        // The page was just reloaded. Clear the value from local storage
+        // so that it will reload the next time this page is visited.
+        localStorage.removeItem('reloaded');
+    } else {
+        // Set a flag so that we know not to reload the page twice.
+        localStorage.setItem('reloaded', '1');
+        this.$router.go();
+    }
     },
     created(){
-    const connectionOptions =  {
-    // "force new connection" : true,
-    // "reconnectionAttempts": "Infinity", 
-    "timeout" : 10000,                  
-    "transports" : ["websocket"]
-    };
-    this.socket = io('http://localhost:3000', connectionOptions);
-    this.socket.emit("joinSession",this.sessionId,this.userEmail);
-    this.socket.on('user-join',(foundUser)=>{
-        if(foundUser){
-            this.newUserJoined(foundUser);
+    // const connectionOptions =  {
+    // "timeout" : 10000,                  
+    // "transports" : ["websocket"]
+    // };
+    // this.socket = io('http://localhost:3000', connectionOptions);
+    this.$socket.$subscribe('user-join',(room,foundUser)=>{
+        if(room===this.sessionId){
+            if(foundUser){
+                this.newUserJoined(foundUser);
+            }
         }
     });
-    this.socket.on('user-left',(user)=>{
-        if(user){
-            this.userLeft(user);
+    this.$socket.$subscribe('user-left',(room,user)=>{
+        if(room===this.sessionId){
+            if(user){
+                this.userLeft(user);
+            }
         }
-    })
-    this.socket.on("sync-data",(data)=>{
-            //console.log('Synching');
+    });
+    this.$socket.$subscribe("canvas-data",(room,data)=>{
+            if(room===this.sessionId){
             const self = this;
             let updateImg = new Image();
             updateImg.src = data;
-            //console.log(data);
             updateImg.onload = () => {
             this.updateCanvas(updateImg,self);
             }
-        });
-    this.socket.on("canvas-data",(data)=>{
-            const self = this;
-            let updateImg = new Image();
-            updateImg.src = data;
-            updateImg.onload = () => {
-            this.updateCanvas(updateImg,self);
         }
     });
-       this.socket.on("canvas-clear",()=>{
-        this.clearCanvas();
+    this.$socket.$subscribe("canvas-clear",(room)=>{
+        if(room===this.sessionId)
+            this.clearCanvas();
     });
     }
 };

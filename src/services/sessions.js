@@ -4,7 +4,29 @@ import { successHandler, errorHandler } from './helper';
 
 //API CALLS RELATED TO MEETINGS
 export const fetchUserSessions = (token) => {
-    return axios.get( `${config.apiBaseUrl}newDoodle/user`,
+    return axios.get( `${config.apiBaseUrl}sessions/user`,
+    { 
+        headers: { 'Authorization': `${token}` }
+
+    }
+     )
+    .then( successHandler )
+    .catch( errorHandler )
+}
+
+export const addSession = (token,sessionUsersList) => {
+    return axios.post( `${config.apiBaseUrl}sessions/new`,sessionUsersList,
+    { 
+        headers: { 'Authorization': `${token}` }
+
+    }
+     )
+    .then( successHandler )
+    .catch( errorHandler )
+}
+
+export const deleteUserSession = (token,sessionID) => {
+    return axios.delete( `${config.apiBaseUrl}sessions/delete?sessionID=${sessionID}`,
     { 
         headers: { 'Authorization': `${token}` }
 

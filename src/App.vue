@@ -113,7 +113,7 @@
           { title: 'Log In', icon: 'mdi-login', to: '/login'},
           { title: 'Sign Up', icon: 'mdi-account-plus' ,to: '/signup'},
           { title: 'Home', icon: 'mdi-home-lightbulb-outline' ,to: '/'},
-          { title: 'Create Doodle', icon: 'mdi-draw' ,to: '/doodle'},
+          { title: 'Saved Canvas', icon: 'mdi-draw' ,to: '/saved'},
           { title: 'Log Out', icon: 'mdi-logout-variant' },
         ],
         right: null,

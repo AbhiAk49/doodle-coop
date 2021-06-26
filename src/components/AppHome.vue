@@ -47,27 +47,35 @@
         </v-col>
         </v-card>
         <v-divider class="ma-5"></v-divider>
-         <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">
-          Available Sessions
+        <div v-if="checkForSessions()">
+          <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">
+          No sessions were found
         </h3>
-        <v-row>
-          <template v-for="(session, i) in sessions">
-            <v-col
-              :key="i"
-              md="4"
-            >
-              <SessionCard :session = "session" />
-            </v-col>
-          </template>
-        </v-row>
+        </div>
+        <div v-else>
+          <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">
+          Available Sessions
+          </h3>
+          <v-row>
+            <template v-for="(session, i) in sessions">
+              <v-col
+                :key="i"
+                md="4"
+              >
+                <SessionCard :session = session v-on:refetchSessions="Refresh" v-on:joining="onJoin"/>
+              </v-col>
+            </template>
+          </v-row>
+        </div>
         </v-container>
       </v-row>
     </v-container>
 </template>
 
 <script>
+import Vue from 'vue';
 import {getUsers} from '@/services/auth';
-import {fetchUserSessions} from '@/services/sessions';
+import {fetchUserSessions,addSession} from '@/services/sessions';
 import SessionCard from '@/components/utils/SessionCard';
   export default {
     name:'AppHome',
@@ -88,7 +96,6 @@ import SessionCard from '@/components/utils/SessionCard';
     }),
     computed: {
               token(){
-            //console.log(this.$store.state.auth.token);
             return this.$store.state.auth.token;
             },
             getName(){
@@ -96,21 +103,40 @@ import SessionCard from '@/components/utils/SessionCard';
             }
     },
     methods: {
-      fetch(){
+      fetch(){  this.loading = true;
                 fetchUserSessions(this.token)
                     .then(sessions=>{
                         this.loading=false;
                         this.sessions=sessions;
-                        //console.log(this.sessions);
+                        this.checkForSessions();
                     })
                     .catch( error => {
                         this.error = error;
-                        this.status = 'Error';
+                        Vue.$toast.error(
+                        `${error.response.data.message}`,{timeout:5000}
+                        );
                         this.$router.push({name:'login'});
                     });
         },
         startSession(){
-          console.log(this.selectedUsers);
+          addSession(this.token,this.selectedUsers)
+            .then((session)=>{
+              this.$router.push( { path: `/doodle/${session._id}` } );
+            })
+        },
+        Refresh(){
+          this.fetch();
+        },
+        onJoin(id){
+          this.$router.push( { path: `/doodle/${id}` } );
+        },
+        checkForSessions(){
+                if(this.sessions.length===0){
+                    return true;
+                }
+                else{
+                    return false
+                }
         }
     },
     created(){
