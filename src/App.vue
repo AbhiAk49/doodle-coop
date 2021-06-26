@@ -100,6 +100,7 @@
 
     <v-main>
       <router-view></router-view>
+      <PortalTarget name="popup"/>
     </v-main>
   </v-app>
 </template>

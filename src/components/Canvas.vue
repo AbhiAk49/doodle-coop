@@ -50,8 +50,17 @@
                         <v-col  align-self="end">
                             <v-btn
                             elevation="1"
-                            @click="leave()"
+                            @click="showDialog = true"
                             >Exit
+                                <PopupModalDialog
+                                v-if="showDialog"
+                                label="Add to cart"
+                                @yes="leave"
+                                @no="showDialog = false"
+                                @close="showDialog = false"
+                                >
+                                Are you sure you want to leave this session?
+                                </PopupModalDialog>
                             </v-btn>
                         </v-col>
                     </v-row>
@@ -71,13 +80,15 @@
 </template>
 
 <script>
+import PopupModalDialog from '@/components/utils/PopupModalDialog.vue';
 import Vue from 'vue';
 export default {
     name: 'Canvas',
-    // props: {
-    //     sessionId
-    // },
+    components: {
+        PopupModalDialog
+  },
     data:() => ({
+        showDialog:false,
         canvas:null,
         ctx:null,
         loading:true,
@@ -95,7 +106,7 @@ export default {
     }),
     sockets:{
         connect(){
-            console.log(`connected to socket`);
+            //console.log(`connected to socket`);
             this.$socket.client.emit("subscribe",this.sessionId,this.userEmail);
             this.sendToSocket();
             this.loading = false;
@@ -186,7 +197,7 @@ export default {
         },
         leave(){
             this.$socket.client.emit('leave',this.sessionId,this.userEmail);
-            this.$router.push({name: 'home'});
+            this.$router.push({name: 'home'}).catch(()=>{});
         }
         // onResize (){
         //     canvas.width = window.innerWidth;
@@ -243,7 +254,10 @@ export default {
         if(room===this.sessionId)
             this.clearCanvas();
     });
-    }
+    },
+    // beforeDestroy(){
+    //     this.leave();
+    // }
 };
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <div class="py-1">
       <v-row v-if="loading"
         class="fill-height"
         align-content="center"
@@ -15,7 +15,7 @@
         </v-col>
       </v-row>
       <v-row v-else>
-        <v-container fluid class="my-5">
+        <v-container fluid class="ma-5">
           <v-card
           class="mx-0 pa-2"
           elevation="3"
@@ -69,7 +69,7 @@
         </div>
         </v-container>
       </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>
@@ -93,6 +93,7 @@ import SessionCard from '@/components/utils/SessionCard';
       },
       users:[],
       selectedUsers:[],
+      timer:''
     }),
     computed: {
               token(){
@@ -137,14 +138,21 @@ import SessionCard from '@/components/utils/SessionCard';
                 else{
                     return false
                 }
+        },
+        cancelAutoUpdate(){
+          clearInterval(this.timer);
         }
     },
     created(){
       this.fetch();
+      this.timer = setInterval(this.fetch,10000);
       getUsers(this.token)
                   .then(response=>{
                     this.users=response.map(user=>user.name).filter(name=>name!==this.getName);
                   })
+    },
+    beforeDestroy(){
+      this.cancelAutoUpdate();
     }
   }
 </script>
