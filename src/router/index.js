@@ -40,6 +40,7 @@ const router = new Router({
             name: 'canvas',
             path: '/doodle/:sessionId',
             component: Canvas,
+            props:true,
             meta
         },
         {
@@ -58,7 +59,21 @@ router.beforeEach(( to, from, next ) => {
         next({
             name: 'login'
         });
-    } else {
+    } else if(from.name === 'canvas')
+    {   const exit  = localStorage.getItem('exit');
+        console.log(exit);
+        if(exit){
+            next();
+        }else{
+            const answer = window.confirm(`Do you really want to leave? you have unsaved changes!`)
+            if (answer) {
+              next()
+            } else {
+              next(false)
+            }
+        }
+    }
+    else{
         next();
     }
 });

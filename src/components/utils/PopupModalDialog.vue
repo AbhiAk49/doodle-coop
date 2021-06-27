@@ -45,5 +45,7 @@ export default {
 .ModalDialog__buttons {
   margin-top: 1em;
   text-align: right;
+  display: flex;
+  justify-content: space-around;
 }
 </style>

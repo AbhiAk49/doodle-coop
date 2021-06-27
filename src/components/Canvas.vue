@@ -196,8 +196,9 @@ export default {
             //this.isCanvasCleared=true;
         },
         leave(){
+            localStorage.setItem('exit',true);
             this.$socket.client.emit('leave',this.sessionId,this.userEmail);
-            this.$router.push({name: 'home'}).catch(()=>{});
+            this.$router.push( { name : 'home'} ).catch(()=>{});
         }
         // onResize (){
         //     canvas.width = window.innerWidth;
@@ -221,6 +222,7 @@ export default {
     }
     },
     created(){
+    localStorage.removeItem('exit');
     // const connectionOptions =  {
     // "timeout" : 10000,                  
     // "transports" : ["websocket"]
@@ -256,7 +258,8 @@ export default {
     });
     },
     // beforeDestroy(){
-    //     this.leave();
+    //     this.showDialog = true;
+    //     console.log('changed');
     // }
 };
 </script>
