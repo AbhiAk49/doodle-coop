@@ -14,21 +14,24 @@
             small
             absolute top right
             :disabled = "hostCheck"
-            @click="deleteSession()"
+            @click="deleteD"
         >
             <v-icon>mdi-trash-can-outline</v-icon>
         </v-btn>
             <v-list-item three-line>
             <v-list-item-content>
                 <div class="text-overline mb-4">
-                    Created By:
+                    Title: {{doodle.title}}
                 </div>
-                <v-list-item-title class="text-h5 mb-1">
-                {{session.users[0].name}}
-                </v-list-item-title>
-                <v-list-item-subtitle class="deep-orange--text text--lighten-2">{{session._id}}</v-list-item-subtitle>
-                <v-list-item-subtitle class="blue-grey--text">@{{session.time}}</v-list-item-subtitle>
-                <v-list-item-subtitle class="blue-grey--text text--lighten-1">{{formatDate(session.date).formatDate}}</v-list-item-subtitle>
+                <v-img 
+                id = "img-preview"
+                max-height="150"
+                max-width="250"
+                :src= doodle.img64
+                @click="imgClick"
+                ></v-img>
+                <v-list-item-subtitle class="blue-grey--text">Time : {{doodle.time}}</v-list-item-subtitle>
+                <v-list-item-subtitle class="blue-grey--text text--lighten-1">Date : {{formatDate(doodle.date).formatDate}}</v-list-item-subtitle>
                 <v-list-item-subtitle class="grey--text text--darken-3" >
                     <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
@@ -44,37 +47,27 @@
             </v-list-item>
 
             <v-card-actions>
-            <v-btn
-                outlined
-                rounded
-                text
-                :disabled ="session.currentlyActive===false"
-                @click="joinSession"
-            >
-               Join
-            </v-btn>
             </v-card-actions>
         </v-card>
     </v-hover>
 </template>
 
 <script>
-import {deleteUserSession} from '@/services/sessions';
+import {deleteDoodle} from '@/services/doodles';
 import moment from 'moment';
 export default {
-    name:'SessionCard',
+    name:'DoodleCard',
     props:{
-        session: Object
+        doodle: Object
     }
     ,
     data(){
         return{
             transparent: 'rgba(255, 255, 255, 0)',
-            isCurrentlyActive:'',
-            sessionID:'',
             otherUsersDisplay:[],
             otherUsers:[],
-            hostCheck:false
+            hostCheck:false,
+            doodleID:'',
         }
     }
     ,
@@ -92,15 +85,14 @@ export default {
             return{
                 formatDate
             }
-        }
-        ,
-        deleteSession(){
-            deleteUserSession(this.token,this.sessionID)
-                .then( ()=>{this.$emit('refetchSessions')});
-        }
-        ,
+        },
+        deleteD(){
+            //console.log(this.doodleID);
+            deleteDoodle(this.token,this.doodleID)
+                .then( ()=>{this.$emit('refetchDoodles')});
+        },
         deleteDisabler(){
-            let host  = this.session.users[0].name;
+            let host  = this.doodle.users[0].name;
             if(host.localeCompare(this.getName)===0){
                 this.hostCheck = false
                 return
@@ -110,18 +102,16 @@ export default {
                 return
             }
         },
-        joinSession(){
-            this.$emit('joining',this.sessionID);
+        imgClick(){
+            this.$emit('viewImg', this.doodle.img64);
         }
     },
     created(){
         this.deleteDisabler();
-        this.isCurrentlyActive = this.session.currentlyActive;   
-        this.sessionID = this.session._id; 
-        this.otherUsers = this.session.users.map(user=>user.name);
-        this.otherUsers = this.otherUsers.slice(1);
-        if(this.session.users.length>3){
-            this.otherUsersDisplay = `${this.session.users[1].name},${this.session.users[2].name}....`;
+        this.doodleID = this.doodle._id;
+        this.otherUsers = this.doodle.users.map(user=>user.name);
+        if(this.doodle.users.length>3){
+            this.otherUsersDisplay = `${this.doodle.users[0].name},${this.doodle.users[1].name}....`;
         }
         else{
             this.otherUsersDisplay = this.otherUsers.join(",");
@@ -146,5 +136,9 @@ export default {
 
 #del-btn{
     top:10px;
+}
+
+#img-preview{
+    cursor: pointer;
 }
 </style>

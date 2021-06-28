@@ -25,8 +25,8 @@ export const saveDoodle = (token,doodleDetails) => {
     .catch( errorHandler )
 }
 
-export const deleteUserSession = (token,sessionID) => {
-    return axios.delete( `${config.apiBaseUrl}sessions/delete?sessionID=${sessionID}`,
+export const deleteDoodle = (token,doodleID) => {
+    return axios.delete( `${config.apiBaseUrl}doodles/delete?doodleID=${doodleID}`,
     { 
         headers: { 'Authorization': `${token}` }
 

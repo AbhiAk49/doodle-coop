@@ -54,12 +54,12 @@ const router = new Router({
 
 // Global auth guard
 router.beforeEach(( to, from, next ) => {
-    // Right now, role-based authorization is NOT supported
     if( to.meta.authorize && !store.getters.isAuthenticated ) {
         next({
             name: 'login'
         });
-    } else if(from.name === 'canvas')
+    } 
+    else if(from.name === 'canvas')
     {   const exit  = localStorage.getItem('exit');
         if(exit){
             next();

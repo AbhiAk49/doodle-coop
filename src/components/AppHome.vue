@@ -57,7 +57,7 @@
           Available Sessions
           </h3>
           <v-row>
-            <template v-for="(session, i) in sessions">
+            <template v-for="(session, i) in activeSessions">
               <v-col
                 :key="i"
                 md="4"
@@ -69,23 +69,64 @@
         </div>
         </v-container>
       </v-row>
+      <v-row>
+          <v-divider class="ma-5"></v-divider>
+            <v-container fluid class="ma-5">
+              <v-expansion-panels>
+                <v-expansion-panel>
+                  <v-expansion-panel-header @click="fetchPastSessions">
+                    <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">
+                      Past Sessions
+                    </h3>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-row v-if="pastSessionLoading"
+                      class="fill-height"
+                      align-content="center"
+                      justify="center"
+                    >
+                      <v-col class="ma-0 pa-0">
+                        <v-progress-linear
+                          color="deep-purple accent-4"
+                          indeterminate
+                          rounded
+                          height="6"
+                        ></v-progress-linear>
+                      </v-col>
+                    </v-row>
+                    <v-row v-else>
+                      <template v-for="(session, i) in inactiveSessions">
+                        <v-col :key="i" md="4">
+                          <SessionList :session = session v-on:refetchSessions="updateInactive"/>
+                        </v-col>
+                      </template>
+                    </v-row>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>    
+            </v-container>
+      </v-row>
     </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import {getUsers} from '@/services/auth';
-import {fetchUserSessions,addSession} from '@/services/sessions';
+import {fetchActiveSessions,addSession,fetchInactiveSessions} from '@/services/sessions';
 import SessionCard from '@/components/utils/SessionCard';
+import SessionList from '@/components/utils/SessionList';
   export default {
     name:'AppHome',
     components:{
-      SessionCard
+      SessionCard,
+      SessionList
     },
     data: () => ({
-      sessions:[],
+      activeSessions:[],
+      inactiveSessions:[],
       error: null,
       loading:true,
+      pastSessionLoading:true,
       user:{
           name:String,
           email:String,
@@ -105,10 +146,10 @@ import SessionCard from '@/components/utils/SessionCard';
     },
     methods: {
       fetch(){  this.loading = true;
-                fetchUserSessions(this.token)
+                fetchActiveSessions(this.token)
                     .then(sessions=>{
                         this.loading=false;
-                        this.sessions=sessions;
+                        this.activeSessions=sessions;
                         this.checkForSessions();
                     })
                     .catch( error => {
@@ -118,6 +159,16 @@ import SessionCard from '@/components/utils/SessionCard';
                         );
                         this.$router.push({name:'login'});
                     });
+        },
+        fetchPastSessions(){
+          fetchInactiveSessions(this.token)
+            .then((sessions)=>{
+              this.inactiveSessions = sessions;
+              this.pastSessionLoading = false;
+            });
+        },
+        updateInactive(){
+          this.fetchPastSessions();
         },
         startSession(){
           addSession(this.token,this.selectedUsers)
@@ -134,7 +185,7 @@ import SessionCard from '@/components/utils/SessionCard';
           this.$router.push( { path: `/doodle/${id}` } );
         },
         checkForSessions(){
-                if(this.sessions.length===0){
+                if(this.activeSessions.length===0){
                     return true;
                 }
                 else{
