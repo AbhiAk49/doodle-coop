@@ -13,7 +13,6 @@
                 id="del-btn"
                 block
                 small
-                :disabled ="hostCheck"
                 @click="deleteSession()"
             >
             <v-icon>mdi-trash-can-outline</v-icon>
@@ -36,8 +35,7 @@ export default {
         return{
             sessionID:'',
             otherUsersDisplay:[],
-            otherUsers:[],
-            hostCheck:false
+            otherUsers:[]
         }
     }
     ,
@@ -61,21 +59,9 @@ export default {
             deleteUserSession(this.token,this.sessionID)
                 .then( ()=>{this.$emit('refetchSessions')});
         }
-        ,
-        deleteDisabler(){
-            let host  = this.session.users[0].name;
-            if(host.localeCompare(this.getName)===0){
-                this.hostCheck = false
-                return
-            }
-            else{
-                this.hostCheck = true
-                return
-            }
-        }
+        
     },
     created(){
-        this.deleteDisabler();
         this.isCurrentlyActive = this.session.currentlyActive;   
         this.sessionID = this.session._id; 
         this.otherUsers = this.session.users.map(user=>user.name);
