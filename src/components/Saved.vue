@@ -54,6 +54,7 @@
             </div>
             <div v-else>
                 <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">Saved Doodles</h3>
+                <v-divider class="ma-2"></v-divider>
                 <v-row>
                 <template v-for="(doodle, i) in savedDoodles">
                 <v-col
@@ -125,7 +126,7 @@ export default {
     },
     created(){
         this.fetchDoodles();
-        //this.timer = setInterval(this.fetchDoodles,10000);
+        this.timer = setInterval(this.fetchDoodles,10000);
     },
     beforeDestroy(){
         this.cancelAutoUpdate();
