@@ -61,7 +61,6 @@ router.beforeEach(( to, from, next ) => {
         });
     } else if(from.name === 'canvas')
     {   const exit  = localStorage.getItem('exit');
-        console.log(exit);
         if(exit){
             next();
         }else{

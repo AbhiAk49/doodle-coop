@@ -48,6 +48,7 @@
                 outlined
                 rounded
                 text
+                :disabled ="session.currentlyActive===false"
                 @click="joinSession"
             >
                Join

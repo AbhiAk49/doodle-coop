@@ -122,7 +122,9 @@ import SessionCard from '@/components/utils/SessionCard';
         startSession(){
           addSession(this.token,this.selectedUsers)
             .then((session)=>{
-              this.$router.push( { path: `/doodle/${session._id}` } );
+              console.log(session);
+              this.$router.push( 
+                { path: `/doodle/${session._id}`} );
             })
         },
         Refresh(){

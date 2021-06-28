@@ -2,9 +2,9 @@ import axios from 'axios';
 import config from '@/config';
 import { successHandler, errorHandler } from './helper';
 
-//API CALLS RELATED TO SESSIONS
-export const fetchUserSessions = (token) => {
-    return axios.get( `${config.apiBaseUrl}sessions/user`,
+//API CALLS RELATED TO DOODLES
+export const fetchUserDoodles = (token) => {
+    return axios.get( `${config.apiBaseUrl}doodles/user`,
     { 
         headers: { 'Authorization': `${token}` }
 
@@ -14,8 +14,8 @@ export const fetchUserSessions = (token) => {
     .catch( errorHandler )
 }
 
-export const addSession = (token,sessionUsersList) => {
-    return axios.post( `${config.apiBaseUrl}sessions/new`,sessionUsersList,
+export const saveDoodle = (token,doodleDetails) => {
+    return axios.post( `${config.apiBaseUrl}doodles/save`,doodleDetails,
     { 
         headers: { 'Authorization': `${token}` }
 

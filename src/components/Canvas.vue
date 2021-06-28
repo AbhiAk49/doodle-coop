@@ -2,6 +2,10 @@
     <div >
         <v-container class="mx-auto">
             <v-row>
+                <v-text-field class="mt-5"
+                label="Title" v-model="doodleTitle"
+                placeholder="Enter the title for doodle"
+                outlined></v-text-field>
                 <v-col align = "center">
                     <v-sheet
                         color="gray"
@@ -40,27 +44,36 @@
                         max=10
                     ></v-slider>
                     <v-row align-content = "space-between">
-                        <v-col align-self="start">
+                        <v-col>
                             <v-btn
                             elevation="1"
                             @click="clearCanvas(); sendClear()"
                             >Clear
                             </v-btn>
                         </v-col>
-                        <v-col  align-self="end">
+                        <v-col >
                             <v-btn
                             elevation="1"
                             @click="showDialog = true"
                             >Exit
                                 <PopupModalDialog
                                 v-if="showDialog"
-                                label="Add to cart"
+                                label="Exit Session"
                                 @yes="leave"
                                 @no="showDialog = false"
                                 @close="showDialog = false"
                                 >
                                 Are you sure you want to leave this session?
                                 </PopupModalDialog>
+                            </v-btn>
+                        </v-col>
+                        <v-col>
+                            <v-btn
+                            elevation="1"
+                            :loading="savingComplete"
+                            :disabled="savingComplete"
+                            @click="saveSession"
+                            >Save & End
                             </v-btn>
                         </v-col>
                     </v-row>
@@ -80,6 +93,7 @@
 </template>
 
 <script>
+import {saveDoodle} from '@/services/doodles';
 import PopupModalDialog from '@/components/utils/PopupModalDialog.vue';
 import Vue from 'vue';
 export default {
@@ -88,6 +102,10 @@ export default {
         PopupModalDialog
   },
     data:() => ({
+        doodleTitle:'',
+        loader:null,
+        savingComplete:false,
+        isHost:false,
         showDialog:false,
         canvas:null,
         ctx:null,
@@ -104,18 +122,30 @@ export default {
         isCanvasCleared:true
         //updateImg: Image
     }),
+    watch: {
+    //   loader () {
+    //     const l = this.loader
+    //     this[l] = !this[l]
+
+    //     setTimeout(() => (this[l] = false), 3000)
+
+    //     this.loader = null
+    //   },
+    },
     sockets:{
         connect(){
             //console.log(`connected to socket`);
             this.$socket.client.emit("subscribe",this.sessionId,this.userEmail);
             this.sendToSocket();
             this.loading = false;
-            //this.$emit()
         }
     },
     computed: {
-              userEmail(){
+        userEmail(){
             return this.$store.state.auth.email;
+        },
+        token(){
+            return this.$store.state.auth.token;
         }
     },
     methods: {
@@ -128,7 +158,6 @@ export default {
                           timeout:5000
                       });
             }
-
         },
         userLeft(user){
             Vue.$toast.error(
@@ -195,10 +224,27 @@ export default {
             this.$socket.client.emit('canvas-clear',this.sessionId);
             //this.isCanvasCleared=true;
         },
+        exitEvent(){
+            this.$socket.client.emit('leave',this.sessionId,this.userEmail);
+        },
         leave(){
             localStorage.setItem('exit',true);
-            this.$socket.client.emit('leave',this.sessionId,this.userEmail);
+            this.exitEvent();
             this.$router.push( { name : 'home'} ).catch(()=>{});
+        },
+        saveSession(){
+            let doodleDetails = {
+                title : this.doodleTitle,
+                sessionId : this.sessionId,
+                base64 : this.base64ImgData
+            }
+            this.savingComplete = true;
+            saveDoodle(this.token,doodleDetails)
+                .then(()=>{
+                    this.$socket.client.emit('terminate-session',this.sessionId);
+                    this.savingComplete = false;
+                    this.leave();
+                    });
         }
         // onResize (){
         //     canvas.width = window.innerWidth;
@@ -230,9 +276,7 @@ export default {
     // this.socket = io('http://localhost:3000', connectionOptions);
     this.$socket.$subscribe('user-join',(room,foundUser)=>{
         if(room===this.sessionId){
-            if(foundUser){
                 this.newUserJoined(foundUser);
-            }
         }
     });
     this.$socket.$subscribe('user-left',(room,user)=>{
@@ -252,17 +296,60 @@ export default {
             }
         }
     });
+
     this.$socket.$subscribe("canvas-clear",(room)=>{
         if(room===this.sessionId)
             this.clearCanvas();
     });
+        this.$socket.$subscribe('terminate-session',(room)=>{
+        if(room===this.sessionId){
+            setTimeout(()=>{
+                this.leave();
+            },5000)
+        }
+    });
     },
-    // beforeDestroy(){
-    //     this.showDialog = true;
-    //     console.log('changed');
-    // }
+    beforeDestroy(){
+        this.exitEvent();
+    }
 };
 </script>
 
 <style scoped>
+  .custom-loader{
+    animation: loader 1s infinite;
+    display: flex;
+  }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 </style>
