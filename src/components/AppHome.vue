@@ -75,9 +75,9 @@
               <v-expansion-panels>
                 <v-expansion-panel>
                   <v-expansion-panel-header @click="fetchPastSessions">
-                    <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">
-                      Past Sessions
-                    </h3>
+                  <h3 class="text-h4 font-weight-light dark-grey--text darken-4 mb-2">
+                    View Previous Sessions
+                  </h3>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <v-row v-if="pastSessionLoading"
@@ -94,13 +94,20 @@
                         ></v-progress-linear>
                       </v-col>
                     </v-row>
+                    <div v-else align="center">
+                      <div v-if="checkForInactiveSessions()">
+                        <div class="font-weight-light dark-grey--text darken-4 mb-2">
+                        No sessions were found
+                        </div>
+                      </div>
                     <v-row v-else>
-                      <template v-for="(session, i) in inactiveSessions">
-                        <v-col :key="i" md="4">
+                        <template v-for="(session, i) in inactiveSessions">
+                        <v-col :key="i" cols=12>
                           <SessionList :session = session v-on:refetchSessions="updateInactive"/>
                         </v-col>
                       </template>
                     </v-row>
+                    </div>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>    
@@ -173,7 +180,6 @@ import SessionList from '@/components/utils/SessionList';
         startSession(){
           addSession(this.token,this.selectedUsers)
             .then((session)=>{
-              console.log(session);
               this.$router.push( 
                 { path: `/doodle/${session._id}`} );
             })
@@ -185,12 +191,20 @@ import SessionList from '@/components/utils/SessionList';
           this.$router.push( { path: `/doodle/${id}` } );
         },
         checkForSessions(){
-                if(this.activeSessions.length===0){
-                    return true;
-                }
-                else{
-                    return false
-                }
+            if(this.activeSessions.length===0){
+                return true;
+            }
+            else{
+                return false
+            }
+        },
+        checkForInactiveSessions(){
+            if(this.inactiveSessions.length===0){
+                return true;
+            }
+            else{
+                return false
+            }
         },
         cancelAutoUpdate(){
           clearInterval(this.timer);

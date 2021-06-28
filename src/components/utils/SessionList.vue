@@ -9,19 +9,17 @@
             <v-list-item-subtitle>
             {{formatDate(session.date).formatDate}}-@{{session.time}}
             </v-list-item-subtitle>
+            <v-btn
+                id="del-btn"
+                block
+                small
+                :disabled ="hostCheck"
+                @click="deleteSession()"
+            >
+            <v-icon>mdi-trash-can-outline</v-icon>
+            </v-btn>
         </v-list-item-content>
     </v-list-item>
-        <v-btn
-            id="del-btn"
-            fab
-            depressed
-            small
-            absolute top right
-            :disabled = "hostCheck"
-            @click="deleteSession()"
-        >
-            <v-icon>mdi-trash-can-outline</v-icon>
-        </v-btn>
     </div>
 </template>
 
