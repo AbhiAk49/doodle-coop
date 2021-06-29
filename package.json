@@ -4,14 +4,18 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build && rimraf ../doodle-app-backend/public && copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public",
+    "rimraf": "rimraf ../doodle-app-backend/public",
+    "copyfiles": "copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "copyfiles": "^2.4.1",
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
     "portal-vue": "^2.1.7",
+    "rimraf": "^3.0.2",
     "socket.io-client": "^4.1.2",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1",
