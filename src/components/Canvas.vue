@@ -223,12 +223,13 @@ export default {
             this.$router.push( { name : 'home'} ).catch(()=>{});
         },
         saveSession(){
+            this.savingComplete = true;
+            this.base64ImgData  = this.canvas.toDataURL("image/png");
             let doodleDetails = {
                 title : this.doodleTitle,
                 sessionId : this.sessionId,
                 base64 : this.base64ImgData
             }
-            this.savingComplete = true;
             saveDoodle(this.token,doodleDetails)
                 .then(()=>{
                     this.$socket.client.emit('terminate-session',this.sessionId);

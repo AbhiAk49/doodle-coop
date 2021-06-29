@@ -126,25 +126,43 @@
     },
 
     methods: {
-      submit () {
+    async submit () {
         this.$v.$touch();
          if( !this.$v.form.$invalid ) {
-            this.$store.dispatch('login',this.form )
-                .then( () => {
-                    this.$router.push( { name: 'home' } );
-                    Vue.$toast.success(
-                        `Welcome! ${this.getName}`,
-                      {
-                          timeout:5000
-                      });
-                    } )
-                .catch( error => {
-                    Vue.$toast.error(
+              try{
+                      await this.$store.dispatch('login',this.form )
+                      this.$router.push( { name: 'home' } )
+                       Vue.$toast.success(
+                          `Welcome! ${this.getName}`,
+                        {
+                            timeout:5000
+                        });
+
+                }
+                catch(error){
+                  Vue.$toast.error(
                         `${error.response.data.message}`,
                     {
                         timeout:5000
                     });
-                });
+                }
+                // .then( () => {
+                //     this.$router.push( { name: 'home' } )
+                //       .then(()=>{
+                //           Vue.$toast.success(
+                //           `Welcome! ${this.getName}`,
+                //         {
+                //             timeout:5000
+                //         });
+                //       })
+                // //     } )
+                // .catch( error => {
+                //     Vue.$toast.error(
+                //         `${error.response.data.message}`,
+                //     {
+                //         timeout:5000
+                //     });
+                // });
             } 
         else {
             Vue.$toast.error(
