@@ -212,7 +212,7 @@ import SessionList from '@/components/utils/SessionList';
     },
     created(){
       this.fetch();
-      this.timer = setInterval(this.fetch,10000);
+      this.timer = setInterval(this.fetch,50000);
       getUsers(this.token)
                   .then(response=>{
                     this.users=response.map(user=>user.name).filter(name=>name!==this.getName);

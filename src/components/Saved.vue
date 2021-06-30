@@ -126,7 +126,7 @@ export default {
     },
     created(){
         this.fetchDoodles();
-        this.timer = setInterval(this.fetchDoodles,10000);
+        this.timer = setInterval(this.fetchDoodles,50000);
     },
     beforeDestroy(){
         this.cancelAutoUpdate();
@@ -137,7 +137,12 @@ export default {
 <style scoped>
 #fullImg{
     max-width: 900px;
-    width:420px;
+    width:240px;
+}
+@media (min-width:450px) {
+    #fullImg{
+        width:420px;
+    }
 }
 @media (min-width:640px) {
     #fullImg{
