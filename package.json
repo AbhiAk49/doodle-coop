@@ -7,7 +7,8 @@
     "build": "vue-cli-service build && rimraf ../doodle-app-backend/public && copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public",
     "rimraf": "rimraf ../doodle-app-backend/public",
     "copyfiles": "copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "build:dev": "vue-cli-service build --mode development && rimraf ../doodle-app-backend/public && copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public"
   },
   "dependencies": {
     "axios": "^0.21.1",

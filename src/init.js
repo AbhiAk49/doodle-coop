@@ -11,10 +11,10 @@ const options = { "timeout" : 10000,"transports" : ["websocket"] };
 const NODE_ENV = process.env.NODE_ENV ;
 let socketString = '';
 if(NODE_ENV === 'development'){
-    socketString = 'http://localhost:3000'
+    socketString = 'http://localhost:4040'
 }
 else{
-    socketString = 'https://doodle-coop.herokuapp.com/'
+    socketString = 'https://doodle-backend.onrender.com'
 }
 const SocketInstance = io(socketString, options);
 Vue.use(PortalVue);
