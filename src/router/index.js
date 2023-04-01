@@ -9,72 +9,71 @@ import PageNotFound from '@/components/PageNotFound';
 import store from '@/store';
 
 const meta = {
-    authorize: []
+  authorize: [],
 };
 const router = new Router({
-    mode: 'history',
-    routes: [
-        {
-            name: 'login',
-            path: '/login',
-            component: AppLogin
-        },
-        {
-            name: 'signup',
-            path: '/signup',
-            component: AppSignup
-        },
-        {
-            name: 'home',
-            path: '/',
-            component: AppHome,
-            meta
-        },
-        {
-            name: 'saved',
-            path: '/saved',
-            component: Saved,
-            meta
-        },
-        {
-            name: 'canvas',
-            path: '/doodle/:sessionId',
-            component: Canvas,
-            props:true,
-            meta
-        },
-        {
-            name: 'page-not-found',
-            path: '*',
-            component: PageNotFound
-        }
-    ]
+  mode: 'history',
+  routes: [
+    {
+      name: 'login',
+      path: '/login',
+      component: AppLogin,
+    },
+    {
+      name: 'signup',
+      path: '/signup',
+      component: AppSignup,
+    },
+    {
+      name: 'home',
+      path: '/',
+      component: AppHome,
+      meta,
+    },
+    {
+      name: 'saved',
+      path: '/saved',
+      component: Saved,
+      meta,
+    },
+    {
+      name: 'canvas',
+      path: '/doodle/:sessionId',
+      component: Canvas,
+      props: true,
+      meta,
+    },
+    {
+      name: 'page-not-found',
+      path: '*',
+      component: PageNotFound,
+    },
+  ],
 });
 
-
 // Global auth guard
-router.beforeEach(( to, from, next ) => {
-    if( to.meta.authorize && !store.getters.isAuthenticated ) {
-        next({
-            name: 'login'
-        });
-    } 
-    else if(from.name === 'canvas')
-    {   const exit  = localStorage.getItem('exit');
-        if(exit){
-            next();
-        }else{
-            const answer = window.confirm(`Do you really want to leave? you have unsaved changes!`)
-            if (answer) {
-              next()
-            } else {
-              next(false)
-            }
-        }
-    }
-    else{
+router.beforeEach((to, from, next) => {
+  if (to.meta.authorize && !store.getters.isAuthenticated) {
+    next({
+      name: 'login',
+    });
+  } else if (from.name === 'canvas') {
+    const exit = localStorage.getItem('exit');
+    if (exit) {
+      next();
+    } else {
+      const answer = window.confirm(
+        `Do you really want to leave? you have unsaved changes!`
+      );
+      if (answer) {
         next();
+      } else {
+        next(false);
+      }
     }
+  } else {
+    next();
+  }
 });
 
 export default router;

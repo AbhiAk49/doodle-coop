@@ -1,11 +1,8 @@
 <template>
   <Portal to="popup">
-    <PopupBase
-      :label="label"
-      @close="$router.back()"
-    >
-      <slot name="backdrop" slot="backdrop"/>
-      <slot/>
+    <PopupBase :label="label" @close="$router.back()">
+      <slot name="backdrop" slot="backdrop" />
+      <slot />
     </PopupBase>
   </Portal>
 </template>
@@ -18,11 +15,11 @@ export default {
   props: {
     label: {
       required: true,
-      type: String
-    }
+      type: String,
+    },
   },
   components: {
     PopupBase,
-  }
-}
+  },
+};
 </script>

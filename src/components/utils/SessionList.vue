@@ -1,84 +1,76 @@
 <template>
-    <div>
+  <div>
     <v-list-item three-line>
-        <v-list-item-content>
-            <v-list-item-title>Created By: {{session.users[0].name}}</v-list-item-title>
-            <v-list-item-subtitle>
-                {{otherUsersDisplay}}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle>
-            {{formatDate(session.date).formatDate}}-@{{session.time}}
-            </v-list-item-subtitle>
-            <v-btn
-                id="del-btn"
-                block
-                small
-                @click="deleteSession()"
-            >
-            <v-icon>mdi-trash-can-outline</v-icon>
-            </v-btn>
-        </v-list-item-content>
+      <v-list-item-content>
+        <v-list-item-title
+          >Created By: {{ session.users[0].name }}</v-list-item-title
+        >
+        <v-list-item-subtitle>
+          {{ otherUsersDisplay }}
+        </v-list-item-subtitle>
+        <v-list-item-subtitle>
+          {{ formatDate(session.date).formatDate }}-@{{ session.time }}
+        </v-list-item-subtitle>
+        <v-btn id="del-btn" block small @click="deleteSession()">
+          <v-icon>mdi-trash-can-outline</v-icon>
+        </v-btn>
+      </v-list-item-content>
     </v-list-item>
-    </div>
+  </div>
 </template>
 
 <script>
-import {deleteUserSession} from '@/services/sessions';
+import { deleteUserSession } from '@/services/sessions';
 import moment from 'moment';
 export default {
-    name:'SessionList',
-    props:{
-        session: Object
-    }
-    ,
-    data(){
-        return{
-            sessionID:'',
-            otherUsersDisplay:[],
-            otherUsers:[]
-        }
-    }
-    ,
-    computed:{
-        token(){
-            return this.$store.state.auth.token;
-        },
-        getName(){
-            return this.$store.state.auth.name;
-        }
+  name: 'SessionList',
+  props: {
+    session: Object,
+  },
+  data() {
+    return {
+      sessionID: '',
+      otherUsersDisplay: [],
+      otherUsers: [],
+    };
+  },
+  computed: {
+    token() {
+      return this.$store.state.auth.token;
     },
-    methods:{
-        formatDate(date){
-            let formatDate  =  moment(date,'DD/MM/YYYY').format("ddd, MMMM Do YYYY");
-            return{
-                formatDate
-            }
-        }
-        ,
-        deleteSession(){
-            deleteUserSession(this.token,this.sessionID)
-                .then( ()=>{this.$emit('refetchSessions')});
-        }
-        
+    getName() {
+      return this.$store.state.auth.name;
     },
-    created(){
-        this.isCurrentlyActive = this.session.currentlyActive;   
-        this.sessionID = this.session._id; 
-        this.otherUsers = this.session.users.map(user=>user.name);
-        this.otherUsers = this.otherUsers.slice(1);
-        if(this.session.users.length>3){
-            this.otherUsersDisplay = `${this.session.users[1].name},${this.session.users[2].name}....`;
-        }
-        else{
-            this.otherUsersDisplay = this.otherUsers.join(",");
-        }
+  },
+  methods: {
+    formatDate(date) {
+      let formatDate = moment(date, 'DD/MM/YYYY').format('ddd, MMMM Do YYYY');
+      return {
+        formatDate,
+      };
+    },
+    deleteSession() {
+      deleteUserSession(this.token, this.sessionID).then(() => {
+        this.$emit('refetchSessions');
+      });
+    },
+  },
+  created() {
+    this.isCurrentlyActive = this.session.currentlyActive;
+    this.sessionID = this.session._id;
+    this.otherUsers = this.session.users.map((user) => user.name);
+    this.otherUsers = this.otherUsers.slice(1);
+    if (this.session.users.length > 3) {
+      this.otherUsersDisplay = `${this.session.users[1].name},${this.session.users[2].name}....`;
+    } else {
+      this.otherUsersDisplay = this.otherUsers.join(',');
     }
-}
+  },
+};
 </script>
 
-
 <style scoped>
-#del-btn{
-    top:10px;
+#del-btn {
+  top: 10px;
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <div class="PopupOverlay"/>
+  <div class="PopupOverlay" />
 </template>
 
 <script>
 export default {
-  name: 'PopupOverlay'
-}
+  name: 'PopupOverlay',
+};
 </script>
 
 <style>

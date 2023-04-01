@@ -4,45 +4,37 @@ import { successHandler, errorHandler } from './helper';
 
 //API CALLS RELATED TO SESSIONS
 export const fetchActiveSessions = (token) => {
-    return axios.get( `${config.apiBaseUrl}sessions/user`,
-    { 
-        headers: { 'Authorization': `${token}` }
-
-    }
-     )
-    .then( successHandler )
-    .catch( errorHandler )
-}
+  return axios
+    .get(`${config.apiBaseUrl}sessions/user`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(successHandler)
+    .catch(errorHandler);
+};
 
 export const fetchInactiveSessions = (token) => {
-    return axios.get( `${config.apiBaseUrl}sessions/inactive`,
-    { 
-        headers: { 'Authorization': `${token}` }
+  return axios
+    .get(`${config.apiBaseUrl}sessions/inactive`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(successHandler)
+    .catch(errorHandler);
+};
 
-    }
-     )
-    .then( successHandler )
-    .catch( errorHandler )
-}
+export const addSession = (token, sessionUsersList) => {
+  return axios
+    .post(`${config.apiBaseUrl}sessions/new`, sessionUsersList, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(successHandler)
+    .catch(errorHandler);
+};
 
-export const addSession = (token,sessionUsersList) => {
-    return axios.post( `${config.apiBaseUrl}sessions/new`,sessionUsersList,
-    { 
-        headers: { 'Authorization': `${token}` }
-
-    }
-     )
-    .then( successHandler )
-    .catch( errorHandler )
-}
-
-export const deleteUserSession = (token,sessionID) => {
-    return axios.delete( `${config.apiBaseUrl}sessions/delete?sessionID=${sessionID}`,
-    { 
-        headers: { 'Authorization': `${token}` }
-
-    }
-     )
-    .then( successHandler )
-    .catch( errorHandler )
-}
+export const deleteUserSession = (token, sessionID) => {
+  return axios
+    .delete(`${config.apiBaseUrl}sessions/delete?sessionID=${sessionID}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(successHandler)
+    .catch(errorHandler);
+};

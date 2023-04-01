@@ -1,16 +1,12 @@
 <template>
   <Portal to="popup">
     <PopupBase :label="label" @close="$emit('close')">
-      <PopupOverlay slot="backdrop"/>
+      <PopupOverlay slot="backdrop" />
       <div class="ModalDialog__content">
-        <slot/>
+        <slot />
         <div class="ModalDialog__buttons">
-          <button @click="$emit('no')">
-            No
-          </button>
-          <button @click="$emit('yes')">
-            Yes
-          </button>
+          <button @click="$emit('no')">No</button>
+          <button @click="$emit('yes')">Yes</button>
         </div>
       </div>
     </PopupBase>
@@ -26,14 +22,14 @@ export default {
   props: {
     label: {
       required: true,
-      type: String
+      type: String,
     },
   },
   components: {
     PopupBase,
     PopupOverlay,
   },
-}
+};
 </script>
 
 <style>

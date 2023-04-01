@@ -8,7 +8,8 @@
     "rimraf": "rimraf ../doodle-app-backend/public",
     "copyfiles": "copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public",
     "lint": "vue-cli-service lint",
-    "build:dev": "vue-cli-service build --mode development && rimraf ../doodle-app-backend/public && copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public"
+    "build:dev": "vue-cli-service build --mode development && rimraf ../doodle-app-backend/public && copyfiles -u 1 \"./dist/**/*\" ../doodle-app-backend/public",
+    "pretty": "./node_modules/.bin/prettier --config ./.prettierrc --write './src/**/*.*'"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -16,6 +17,7 @@
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
     "portal-vue": "^2.1.7",
+    "prettier": "^2.8.7",
     "rimraf": "^3.0.2",
     "socket.io-client": "^4.1.2",
     "vue": "^2.6.11",

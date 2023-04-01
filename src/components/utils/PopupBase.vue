@@ -7,9 +7,9 @@
     :class="{ 'PopupWrap--centered': centered }"
   >
     <div class="PopupWrap__backdrop" @click="$emit('close')">
-      <slot name="backdrop"/>
+      <slot name="backdrop" />
     </div>
-    <slot/>
+    <slot />
   </div>
 </template>
 
@@ -19,16 +19,16 @@ export default {
   props: {
     centered: {
       default: true,
-      type: Boolean
+      type: Boolean,
     },
     focusElement: {
       default: null,
-      type: Object
+      type: Object,
     },
     label: {
       required: true,
-      type: String
-    }
+      type: String,
+    },
   },
   mounted() {
     const close = (e) => {
@@ -86,16 +86,18 @@ export default {
       });
     },
     focusFirstDescendant() {
-      const focusable = this.$el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      const focusable = this.$el.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
       if (focusable[0] && focusable[0].focus) focusable[0].focus();
     },
     restoreFocus() {
       const element = this.focusElement || this.previousActiveElement;
 
       if (element && element.focus) element.focus();
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style>
