@@ -1,9 +1,9 @@
 <template>
-  <v-card class="my-10 pa-md-4 mx-auto" max-width="800">
+  <v-card class="my-2 pa-md-3 mx-auto" max-width="800">
     <v-img
       class="white--text align-end"
-      aspect-ratio="1.778"
-      src="../assets/login_image.jpg"
+      aspect-ratio="2.3"
+      src="../assets/login_image_2.jpg"
     >
       <v-card-title>Login</v-card-title>
     </v-img>
@@ -33,25 +33,30 @@
           @input="$v.form.password.$touch()"
           @blur="$v.form.password.$touch()"
         ></v-text-field>
-
-        <v-btn
-          class="mr-4 my-1"
-          @click.prevent="submit"
-          color="blue accent-3"
-          rounded
-        >
-          <v-icon dark> mdi-login </v-icon>
-        </v-btn>
-        <v-btn @click="clear" color="red accent-2" rounded>
-          <v-icon dark> mdi-restore </v-icon>
-        </v-btn>
+        <div class="d-flex align-center justify-space-between">
+          <div>
+            <v-btn
+              class="mr-4 my-1"
+              @click.prevent="submit"
+              color="blue accent-5"
+              rounded
+            >
+              Login
+              <!-- <v-icon dark> mdi-login </v-icon> -->
+            </v-btn>
+            <v-btn @click="clear" color="red accent-5" rounded>
+              Reset
+              <!-- <v-icon dark> mdi-restore </v-icon> -->
+            </v-btn>
+          </div>
+          <v-card-actions>
+            <v-btn class="ma-2" outlined color="teal" @click="navSignup">
+              Create an account
+            </v-btn>
+          </v-card-actions>
+        </div>
       </form>
     </v-card-text>
-    <v-card-actions>
-      <v-btn class="ma-2" outlined color="teal" @click="navSignup">
-        Create an account
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 

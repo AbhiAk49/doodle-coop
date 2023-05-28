@@ -1,14 +1,14 @@
 <template>
-  <v-card class="my-10 pa-md-4 mx-auto" max-width="800">
+  <v-card class="my-2 pa-md-3 mx-auto" max-width="800">
     <v-img
       class="white--text align-end"
-      aspect-ratio="2"
-      src="../assets/signup-alt.png"
+      aspect-ratio="2.15"
+      src="../assets/signup-alt_2.png"
     >
-      <v-card-title><span class="sign-up-txt">Sign Up</span></v-card-title>
+      <v-card-title><span class="sign-up-txt">Register</span></v-card-title>
     </v-img>
 
-    <v-card-subtitle class="pb-0"> Create Your Account </v-card-subtitle>
+    <!-- <v-card-subtitle class="pb-0"> Create Your Account </v-card-subtitle> -->
 
     <v-card-text class="text--primary">
       <form>
@@ -55,25 +55,30 @@
           @input="$v.form.confirmPassword.$touch()"
           @blur="$v.form.confirmPassword.$touch()"
         ></v-text-field>
-
-        <v-btn
-          class="mr-4 my-1"
-          @click.prevent="submit"
-          color="blue accent-3"
-          rounded
-        >
-          <v-icon dark> mdi-account-plus </v-icon>
-        </v-btn>
-        <v-btn @click="clear" color="red accent-2" rounded>
-          <v-icon dark> mdi-restore </v-icon>
-        </v-btn>
+        <div class="d-flex align-center justify-space-between">
+          <div>
+            <v-btn
+              class="mr-4 my-1"
+              @click.prevent="submit"
+              color="blue accent-3"
+              rounded
+            >
+              Register
+              <!-- <v-icon dark> mdi-account-plus </v-icon> -->
+            </v-btn>
+            <v-btn @click="clear" color="red accent-2" rounded>
+              Reset
+              <!-- <v-icon dark> mdi-restore </v-icon> -->
+            </v-btn>
+          </div>
+          <v-card-actions>
+            <v-btn outlined color="teal" @click="navLogin">
+              Already Have an Account?
+            </v-btn>
+          </v-card-actions>
+        </div>
       </form>
     </v-card-text>
-    <v-card-actions>
-      <v-btn class="ma-2" outlined color="teal" @click="navLogin">
-        Already Have an Account?
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 
@@ -187,7 +192,7 @@ export default {
           .then(() => {
             Vue.$toast.success(
               `Account has been created.
-                          Login to continue...`,
+              Login to continue...`,
               {
                 timeout: 5000,
               }
