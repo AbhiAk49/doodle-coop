@@ -1,4 +1,48 @@
 <template>
+  <v-card
+    class="mx-auto"
+    max-width="344"
+  >
+
+    <v-card-title>
+      Created By: {{ session.users[0].name }}
+    </v-card-title>
+
+    <v-card-subtitle>
+      {{ formatDate(session.date).formatDate }}-@{{ session.time }}
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn
+        color="red lighten-2"
+        text
+        @click="deleteSession()"
+      >
+        <v-icon>mdi-trash-can-outline</v-icon>
+      </v-btn>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        icon
+        @click="show = !show"
+      >
+        <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+      </v-btn>
+    </v-card-actions>
+
+    <v-expand-transition>
+      <div v-show="show">
+        <v-divider></v-divider>
+
+        <v-card-text>
+          {{ otherUsersDisplay || 'Only you' }}
+        </v-card-text>
+      </div>
+    </v-expand-transition>
+  </v-card>
+</template>
+<!-- <template>
   <div>
     <v-list-item three-line>
       <v-list-item-content>
@@ -17,7 +61,7 @@
       </v-list-item-content>
     </v-list-item>
   </div>
-</template>
+</template> -->
 
 <script>
 import { deleteUserSession } from '@/services/sessions';
@@ -32,6 +76,7 @@ export default {
       sessionID: '',
       otherUsersDisplay: [],
       otherUsers: [],
+      show: false
     };
   },
   computed: {
@@ -63,7 +108,7 @@ export default {
     if (this.session.users.length > 3) {
       this.otherUsersDisplay = `${this.session.users[1].name},${this.session.users[2].name}....`;
     } else {
-      this.otherUsersDisplay = this.otherUsers.join(',');
+      this.otherUsersDisplay = this.otherUsers.join(', ');
     }
   },
 };

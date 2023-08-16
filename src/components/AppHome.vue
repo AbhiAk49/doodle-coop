@@ -102,7 +102,7 @@
                 </div>
                 <v-row v-else>
                   <template v-for="(session, i) in inactiveSessions">
-                    <v-col :key="i" cols="12">
+                    <v-col :key="i" :cols="12/3">
                       <SessionList
                         :session="session"
                         v-on:refetchSessions="updateInactive"
